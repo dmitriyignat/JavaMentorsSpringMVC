@@ -4,16 +4,16 @@ import java.util.List;
 
 public interface UserDao<T> {
 
-    public List<T> selectAll();
+    List<T> selectAll();
 
-    public T selectById(long id);
+    T selectById(long id);
 
-    public long validate(String login, String password);
+    long validate(String login, String password);
 
-    public void add(T t);
+    void add(T t);
 
-    public void delete(long id);
+    void delete(long id);
 
-    public void update(T t);
+    void update(T t);
 
 }

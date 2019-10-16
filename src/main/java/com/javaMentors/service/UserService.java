@@ -1,41 +1,19 @@
 package com.javaMentors.service;
 
-
-import com.javaMentors.dao.UserDao;
-import com.javaMentors.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
 
-public class UserService implements Service{
+public interface UserService<T>{
 
-    @Autowired
-    private UserDao userDao;
-    public UserService(UserDao userDao) {
-        this.userDao = userDao;
-    }
+        List<T> getAll();
 
-    public User getById(long id) {
-        return (User) userDao.selectById(id);
-    }
+        T getById(long id);
 
-    public List<User> getAll() {
-        return userDao.selectAll();
-    }
+        long validate(String login, String password);
 
-    public void add(Object user) {
-        userDao.add(user);
-    }
+        void add(T t);
 
-    public long validate(String login, String password) {
-        return userDao.validate(login, password);
-    }
+        void delete(long id);
 
-    public void update(Object user) {
-        userDao.update(user);
-    }
+        void update(T t);
 
-    public void delete(long id) {
-         userDao.delete(id);
-    }
 }
