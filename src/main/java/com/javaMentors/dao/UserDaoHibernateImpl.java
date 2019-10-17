@@ -10,7 +10,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
-@Transactional(readOnly = true)
+@Transactional
 @Repository
 public class UserDaoHibernateImpl implements UserDao{
 
@@ -33,17 +33,14 @@ public class UserDaoHibernateImpl implements UserDao{
         return query.getSingleResult();
     }
 
-    @Transactional
     public void add(Object o) {
         entityManager.persist((User) o);
     }
 
-    @Transactional
     public void delete(long id) {
         entityManager.remove((User)selectById(id));
     }
 
-    @Transactional
     public void update(Object o) {
         User userNew = (User)o;
         User userOld = (User)selectById(userNew.getId());
