@@ -1,43 +1,46 @@
 package com.javaMentors.dao;
 
 import com.javaMentors.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.HibernateTemplate;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Transactional(readOnly = true)
 @Repository
 public class UserDaoHibernateImpl implements UserDao{
 
-    @Autowired
-    private HibernateTemplate hibernateTemplate;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @SuppressWarnings("unchecked")
     public List selectAll() {
-        return (List<User>) hibernateTemplate.find("from User");
+        return (List<User>)entityManager.createQuery("SELECT u FROM User u").getResultList();
     }
 
     public Object selectById(long id) {
-        return hibernateTemplate.get(User.class, id);
+        return (User)entityManager.find(User.class, id);
     }
 
     @SuppressWarnings("unchecked")
     public long validate(String login, String password) {
-        List <User> users = (List<User>)hibernateTemplate.find("FROM User as u WHERE u.login = ?", login);
-        return users.size();
+        TypedQuery<Long> query = entityManager.createQuery("SELECT COUNT(u) FROM User u WHERE u.login = :login", Long.class);
+        query.setParameter("login", login);
+        return query.getSingleResult();
     }
 
     @Transactional
     public void add(Object o) {
-        hibernateTemplate.save((User) o);
+        entityManager.persist((User) o);
     }
 
     @Transactional
     public void delete(long id) {
-        hibernateTemplate.delete((User)selectById(id));
+        entityManager.remove((User)selectById(id));
     }
 
     @Transactional
@@ -47,6 +50,6 @@ public class UserDaoHibernateImpl implements UserDao{
         userOld.setLogin(userNew.getLogin());
         userOld.setName(userNew.getName());
         userOld.setPassword(userNew.getPassword());
-        hibernateTemplate.update(userOld);
+        entityManager.merge(userOld);
     }
 }

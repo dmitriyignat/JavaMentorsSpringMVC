@@ -5,6 +5,11 @@ import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.hibernate5.HibernateTemplate;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -46,25 +51,22 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public HibernateTemplate getHibernateTemplate() {
-        return new HibernateTemplate(getSessionFactory());
+    public LocalContainerEntityManagerFactoryBean getEntityManagerFactoryBean() {
+        LocalContainerEntityManagerFactoryBean lcemfb = new LocalContainerEntityManagerFactoryBean();
+        lcemfb.setJpaVendorAdapter(getJpaVendorAdapter());
+        lcemfb.setDataSource(getDataSource());
+        lcemfb.setPersistenceUnitName("myJpaPersistenceUnit");
+        lcemfb.setPackagesToScan("com.javaMentors.model");
+        lcemfb.setJpaProperties(properties());
+        return  lcemfb;
     }
 
     @Bean
-    public SessionFactory getSessionFactory() {
-        LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
-
-        factoryBean.setDataSource(getDataSource());
-        factoryBean.setPackagesToScan("com.javaMentors.model");
-        factoryBean.setHibernateProperties(hibernateProperties());
-
-        try {
-            factoryBean.afterPropertiesSet();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return factoryBean.getObject();
+    public JpaVendorAdapter getJpaVendorAdapter() {
+        JpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+        return adapter;
     }
+
 
     @Bean
     public DataSource getDataSource() {
@@ -77,14 +79,15 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public HibernateTransactionManager getTransactionManager() {
-        return new HibernateTransactionManager(getSessionFactory());
+    public PlatformTransactionManager txManager() {
+        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager(getEntityManagerFactoryBean().getObject());
+        return jpaTransactionManager;
     }
 
-    private Properties hibernateProperties() {
+    private Properties properties() {
         Properties properties = new Properties();
         properties.put(DIALECT, env.getProperty("hibernate.dialect"));
-        properties.put(HBM2DDL_AUTO, env.getProperty("hibernate.hbm2ddl.auto"));
+        properties.put(FORMAT_SQL, env.getProperty("hibernate.format_sql"));
         properties.put(SHOW_SQL, env.getProperty("hibernate.show_sql"));
         return properties;
     }
