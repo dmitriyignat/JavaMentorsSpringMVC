@@ -1,7 +1,6 @@
 package com.javaMentors.dao;
 
 import com.javaMentors.model.User;
-
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,10 +11,17 @@ import java.util.List;
 
 @Transactional
 @Repository
-public class UserDaoHibernateImpl implements UserDao{
+public class UserDaoHibernateImpl implements UserDao {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @SuppressWarnings("unchecked")
+    public Object getUserByLogin(String login) {
+        TypedQuery<User> query = entityManager.createQuery("SELECT u from User u WHERE u.login = :login", User.class);
+        query.setParameter("login", login);
+        return query.getSingleResult();
+    }
 
     @SuppressWarnings("unchecked")
     public List selectAll() {
@@ -47,6 +53,7 @@ public class UserDaoHibernateImpl implements UserDao{
         userOld.setLogin(userNew.getLogin());
         userOld.setName(userNew.getName());
         userOld.setPassword(userNew.getPassword());
+        userOld.setRoles(userNew.getRoles());
         entityManager.merge(userOld);
     }
 }
