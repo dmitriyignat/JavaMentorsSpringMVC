@@ -4,7 +4,6 @@ import com.javaMentors.model.Role;
 import com.javaMentors.model.User;
 import com.javaMentors.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -22,8 +21,12 @@ import java.util.stream.Collectors;
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminController {
 
+    private final UserService<User> service;
+
     @Autowired
-    private UserService service;
+    public AdminController(UserService<User> service) {
+        this.service = service;
+    }
 
     @RequestMapping(value = "/read", method = RequestMethod.GET)
     public ModelAndView readUser(ModelAndView model, Authentication authentication) {
@@ -36,8 +39,8 @@ public class AdminController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ModelAndView redirectToUser(@RequestParam("id") long id, ModelAndView mv){
-        User user = (User)service.getById(id);
-        List<String> roles = user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toList());
+        User user = service.getById(id);
+        List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
         mv.addObject("user", user);
         mv.addObject("roles", roles);
         mv.addObject("message", "Update user");
@@ -48,14 +51,11 @@ public class AdminController {
     @RequestMapping(value = "/updateUser", method = RequestMethod.POST)
     public String updateUser(@RequestParam("id") long id, @RequestParam("name") String name, @RequestParam("role") String[] roles,
                              @RequestParam("login") String login, @RequestParam("password") String password) {
-        User user = (User) service.getById(id);
+        User user = service.getById(id);
         if (user.getLogin().equals(login) || service.validate(login, password) <= 0) {
             user = new User(login, name, password);
-            user.setRoles(Arrays.stream(roles)
-                    .map(role -> new Role(role))
-                    .collect(Collectors.toList()));
             user.setId(id);
-            service.update(user);
+            service.update(user, roles);
         }
         return "redirect:/admin/read";
     }
@@ -78,13 +78,8 @@ public class AdminController {
                           @RequestParam("password") String password, @RequestParam("role") String[] roles) {
 
         User user = new User(login, name, password);
-
-        user.setRoles(Arrays.stream(roles)
-                .map(role -> new Role(role))
-                .collect(Collectors.toList()));
-
         if (service.validate(login, password) == 0) {
-            service.add(user);
+            service.add(user, roles);
         }
         return "redirect:/admin/read";
     }

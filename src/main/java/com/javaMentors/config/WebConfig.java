@@ -23,8 +23,12 @@ import static org.hibernate.cfg.AvailableSettings.*;
 @EnableTransactionManagement
 public class WebConfig {
 
+    private final Environment env;
+
     @Autowired
-    private Environment env;
+    public WebConfig(Environment env) {
+        this.env = env;
+    }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean getEntityManagerFactoryBean() {

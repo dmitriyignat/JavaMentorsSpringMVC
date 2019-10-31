@@ -16,8 +16,12 @@ import org.springframework.web.servlet.ModelAndView;
 @PreAuthorize("hasRole('ROLE_USER')")
 public class UserController {
 
+    private final UserService service;
+
     @Autowired
-    private UserService service;
+    public UserController(UserService service) {
+        this.service = service;
+    }
 
     @RequestMapping(value = "/read", method = RequestMethod.GET)
     public ModelAndView readUser(ModelAndView model, Authentication authentication) {

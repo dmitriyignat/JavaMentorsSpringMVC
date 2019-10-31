@@ -15,14 +15,13 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	private UserService userService;
-
+	private final UserService userService;
 	private AuthenticationSuccessHandler authenticationSuccessHandler;
 
 	@Autowired
-	public AppSecurityConfig(AuthenticationSuccessHandler authenticationSuccessHandler) {
+	public AppSecurityConfig(AuthenticationSuccessHandler authenticationSuccessHandler, UserService userService) {
 		this.authenticationSuccessHandler = authenticationSuccessHandler;
+		this.userService = userService;
 	}
 
 	@Autowired

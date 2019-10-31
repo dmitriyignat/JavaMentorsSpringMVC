@@ -12,10 +12,10 @@ public interface UserDao<T> {
 
     long validate(String login, String password);
 
-    void add(T t);
+    void add(T t, String[] roles);
 
     void delete(long id);
 
-    void update(T t);
+    void update(T t, String[] roles);
 
 }

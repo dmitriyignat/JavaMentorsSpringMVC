@@ -18,10 +18,16 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService{
 
+    private final UserDao userDao;
+
     @Autowired
-    private UserDao userDao;
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
 
     public User getById(long id) {
+
         return (User) userDao.selectById(id);
     }
 
@@ -37,8 +43,8 @@ public class UserServiceImpl implements UserService{
     }
 
 
-    public void add(Object user) {
-        userDao.add(user);
+    public void add(Object user, String[] roles) {
+        userDao.add(user, roles);
     }
 
 
@@ -47,8 +53,8 @@ public class UserServiceImpl implements UserService{
     }
 
 
-    public void update(Object user) {
-        userDao.update(user);
+    public void update(Object user, String[] roles) {
+        userDao.update(user, roles);
     }
 
 
