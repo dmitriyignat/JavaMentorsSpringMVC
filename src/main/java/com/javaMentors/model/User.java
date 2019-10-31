@@ -52,11 +52,6 @@ public class User implements UserDetails {
         roles.add(role);
     }
 
-    public void removeRole(Role role) {
-        roles.remove(role);
-        role.getUsers().remove(this);
-    }
-
     public User(long id, String login, String name, String password) {
         this.id = id;
         this.name = name;
