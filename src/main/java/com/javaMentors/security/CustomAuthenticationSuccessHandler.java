@@ -1,4 +1,4 @@
-package com.javaMentors.config;
+package com.javaMentors.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;

@@ -1,6 +1,6 @@
-package com.javaMentors.config;
+package com.javaMentors.security;
 
-import com.javaMentors.service.UserService;
+import com.javaMentors.service.UserServiceSecurityImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,11 +15,11 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private final UserService userService;
+	private final UserServiceSecurityImpl userService;
 	private AuthenticationSuccessHandler authenticationSuccessHandler;
 
 	@Autowired
-	public AppSecurityConfig(AuthenticationSuccessHandler authenticationSuccessHandler, UserService userService) {
+	public AppSecurityConfig(AuthenticationSuccessHandler authenticationSuccessHandler, UserServiceSecurityImpl userService) {
 		this.authenticationSuccessHandler = authenticationSuccessHandler;
 		this.userService = userService;
 	}

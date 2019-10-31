@@ -1,4 +1,4 @@
-package com.javaMentors.config;
+package com.javaMentors.security;
 
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 

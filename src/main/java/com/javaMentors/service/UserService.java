@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface UserService<T> extends UserDetailsService {
+public interface UserService<T> {
         @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
         T getUserByLogin(String login);
 
